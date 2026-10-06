@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Simulated personal banking user profile on TD Canada Trust.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "card": { "type": "string" },
+        "pass": { "type": "string" },
+        "profileImage": { "type": "string", "description": "Custom Base64 URL or preset identification" },
+        "balances": {
+          "type": "object",
+          "properties": {
+            "checking": { "type": "number" },
+            "savings": { "type": "number" },
+            "credit": { "type": "number" },
+            "investing": { "type": "number" }
+          },
+          "required": ["checking", "savings", "credit", "investing"]
+        },
+        "transactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "date": { "type": "string" },
+              "description": { "type": "string" },
+              "amount": { "type": "number" },
+              "type": { "type": "string", "enum": ["credit", "debit"] },
+              "account": { "type": "string" }
+            },
+            "required": ["id", "date", "description", "amount", "type", "account"]
+          }
+        }
+      },
+      "required": ["id", "username", "card", "pass", "balances", "transactions"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserAccount",
+      "description": "User profiles and state database of simulated checking, savings, credit card and portfolio accounts."
+    }
+  }
+}

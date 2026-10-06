@@ -1,0 +1,6 @@
+{
+  "name": "TD Canada Trust - Personal Banking Simulator",
+  "description": "A high-fidelity replica and interactive financial simulator of the TD Canada Trust personal banking portal, featuring mortgage calculators, currency exchange, interactive card finder, and mock EasyWeb online banking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

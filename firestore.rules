@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety net deny-all catch-all as the first rule block
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Schema Validation Blueprint to prevent "Shadow updates" or "Update Gaps"
+    function isValidUserAccount(data) {
+      return data.keys().hasAll(['id', 'username', 'card', 'pass', 'balances', 'transactions'])
+        && data.id is string
+        && data.id.size() <= 128
+        && data.username is string
+        && data.username.size() <= 128
+        && data.card is string
+        && data.card.size() <= 64
+        && data.pass is string
+        && data.pass.size() <= 64
+        && data.balances is map
+        && data.balances.checking is number
+        && data.balances.savings is number
+        && data.balances.credit is number
+        && data.balances.investing is number
+        && data.transactions is list;
+    }
+
+    // Match block for users collection
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update: if isValidId(userId) && isValidUserAccount(incoming());
+      allow delete: if false; // Block deletion of customer records in sandbox
+    }
+  }
+}
